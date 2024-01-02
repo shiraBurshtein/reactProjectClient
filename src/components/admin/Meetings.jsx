@@ -4,23 +4,27 @@ import { observer } from 'mobx-react-lite';
 import dayjs from 'dayjs';
 
 const Meetings = observer(() => {
-    const currentDate = new Date();
-    const weekAfterNow = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate() + 7
-    );
+    const getColor = (meetingDate) => {
+        const today = new Date();
+        const weekAfterNow = new Date();
+        weekAfterNow.setDate(weekAfterNow.getDate() + 7);
+
+        if (new Date(meetingDate) <= today) {
+            return "#f44336"; 
+        } else if (new Date(meetingDate) <= weekAfterNow) {
+            return "#ffb74d";
+        } else {
+            return "#9ccc65"; 
+        }
+    };
 
     return (
         <>
-            <h2>Meetings</h2>
             {MeetingStore.meetingList.slice().sort((x, y) => new Date(x.dateTime) - new Date(y.dateTime))
-                .map((x, i) => <ShowMeeting key={i} meeting={x}
-                    color={new Date(x.dateTime) - 24 <= new Date() ? "#f44336" : x.dateTime <= weekAfterNow ? "#ffb74d" : "#9ccc65"} />)}
+                .map((x, i) => <ShowMeeting key={i} meeting={x} color={getColor(x.dateTime)} />)}
         </>
     );
 });
-
 export default Meetings;
 
 export function ShowMeeting(props) {
